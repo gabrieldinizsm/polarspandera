@@ -26,5 +26,16 @@ def read_parquet_files(path: str) -> pl.DataFrame:
 
 
 if __name__ == '__main__':
-    df = read_parquet_files('data/').collect()
+    df = read_parquet_files('data/')
+    df = df.with_columns(
+        pl.col('FL_DATE').cast(pl.Date, strict=False).alias("FLIGHT_DATE"),
+        pl.col('DEP_DELAY').cast(pl.Int16).alias("DEPARTURE_DELAY"),
+        (pl.col('DEP_DELAY') > 0).alias('IS_LATE'),
+        pl.col('ARR_DELAY').cast(pl.Int16),
+        pl.col('AIR_TIME').cast(pl.Int16),
+        pl.col('DISTANCE').cast(pl.Int16),
+        (pl.col('DISTANCE') / pl.col('AIR_TIME')).alias('DISTANCE_OVER_TIME'),
+        pl.col('DEP_TIME').cast(pl.Float32).alias("DEPARTURE_TIME"),
+        pl.col('ARR_TIME').cast(pl.Int16),
+    ).collect()
     print(df.head())
