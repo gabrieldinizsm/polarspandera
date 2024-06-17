@@ -1,5 +1,7 @@
 import polars as pl
 import os
+import sys
+sys.path.append(os.getcwd())
 
 
 def read_parquet_files(path: str) -> pl.DataFrame:
@@ -37,5 +39,8 @@ if __name__ == '__main__':
         (pl.col('DISTANCE') / pl.col('AIR_TIME')).alias('DISTANCE_OVER_TIME'),
         pl.col('DEP_TIME').cast(pl.Float32).alias("DEPARTURE_TIME"),
         pl.col('ARR_TIME').cast(pl.Int16),
-    ).collect()
+    )
+
+    from src.contracts.contract import FlightSchema
+    df = FlightSchema.schema.validate(df).collect()
     print(df.head())
