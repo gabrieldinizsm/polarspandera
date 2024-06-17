@@ -18,13 +18,13 @@ def read_parquet_files(path: str) -> pl.DataFrame:
     try:
         files = [file for file in os.listdir(
             path) if file.endswith('.parquet')]
-        dfs = [pl.read_parquet(path + file) for file in files]
-        return pl.concat(dfs)
+        dfs = [pl.scan_parquet(path + file) for file in files]
+        return pl.concat(dfs).lazy()
     except Exception as e:
         print(f'Error while reading file {e}')
         raise
 
 
 if __name__ == '__main__':
-    df = read_parquet_files('data/')
+    df = read_parquet_files('data/').collect()
     print(df.head())
