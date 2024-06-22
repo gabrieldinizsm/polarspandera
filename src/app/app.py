@@ -6,24 +6,30 @@ sys.path.append(os.getcwd())
 
 def read_parquet_files(path: str) -> pl.DataFrame:
     """
-    Function to read multiple parquet files in a directory.
+    Read multiple parquet files in a directory.
 
-    It starts listing all parquet files in the directory, after,
-    it tries to read all of them and merging into a single DataFrame, returning it.
+    Starts by listing all parquet files in the directory, then
+    it tries to read all of them merging into a single DataFrame.
 
     Args:
         path (str): The directory path to be read.
 
     Returns:
-        pl.DataFrame: A single DataFrame, consisting in all files merged into one structure.
+        pl.DataFrame: A single DataFrame, consisting in all files merged.
     """
     try:
         files = [file for file in os.listdir(
             path) if file.endswith('.parquet')]
         dfs = [pl.scan_parquet(path + file) for file in files]
         return pl.concat(dfs).lazy()
+    except FileNotFoundError as e:
+        print(f'File not found: {e}')
+    
+    except IOError as e:
+        print(f'I/O Error: {e}')
+
     except Exception as e:
-        print(f'Error while reading file {e}')
+        print(f'Unexpected Error while reading file: {e}')
         raise
 
 
