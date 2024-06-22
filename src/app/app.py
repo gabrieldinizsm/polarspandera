@@ -24,7 +24,7 @@ def read_parquet_files(path: str) -> pl.DataFrame:
         return pl.concat(dfs).lazy()
     except FileNotFoundError as e:
         print(f'File not found: {e}')
-    
+
     except IOError as e:
         print(f'I/O Error: {e}')
 
